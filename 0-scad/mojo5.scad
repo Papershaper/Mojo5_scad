@@ -38,8 +38,8 @@ servo_mount_h = 10;    // servo_mount_h is the hight of the main block, being re
 side_w = 3;
 
 //yaw Mount - holds the servo mount on an axis, supports yaw servo
-yaw_space_w = 20;
-yaw_space_h = 20;
+yaw_space_w = 15;
+yaw_space_h = 15;
 yaw_mount_w = servo_l+servo_mount_h*2+yaw_space_w;  //servo mount width plus space around it
 yaw_mount_h = servo_w*2 + side_w*2 + yaw_space_h; //servo sizing
 yaw_mount_thick = servo_mount_thick; // depth x direction around 18
@@ -255,6 +255,9 @@ module yaw_mount(){
             translate([-yaw_mount_thick/2,-yaw_mount_w/2-yaw_block,yaw_mount_h/2])cube([yaw_mount_thick,yaw_mount_w+yaw_block*2,yaw_top]);
         }
         union(){
+            //axis holes  - doing 1 long for rough placement
+            #translate([0,-yaw_mount_w/2-30-1,0])rotate([-90,0,0])cylinder(d=m3_hd, h= yaw_mount_w+60);
+            
             //dowel holes
             translate([-servo_mount_thick/2-servo_tab_pos,servo_w/2,servo_mount_h/2+servo_w/2])rotate([0,-90,0])cylinder(d=dowel_d, h=20);
             translate([-servo_mount_thick/2-servo_tab_pos,servo_w/2-4,servo_mount_h/2+servo_w/2])rotate([45,-90,0])cylinder(d=dowel_d, h=40);
@@ -296,12 +299,18 @@ module leg_assembly(){
     //cam link
     translate([13,18,11])rotate([0,-90,0])rotate([0,-0,135])color("Blue", 0.7)cam_link();
 }
-
+module full_leg_assembly(){
+    //the first rotate effects the "yaw"
+    rotate([0,0,0])translate([servo_mount_thick/2+servo_tab_pos,-servo_w/2,-servo_w/2])rotate([90,0,0])leg_assembly();
+    translate([0,0,0])rotate([0,0,0])yaw_mount();
+    
+}
 module assembly(){
 
 }
 
 //[[***** CONSTRUTION  ********]]//
-layout();
-// leg_assembly();
+//layout();
+//leg_assembly();
+full_leg_assembly();
 //assembly();
