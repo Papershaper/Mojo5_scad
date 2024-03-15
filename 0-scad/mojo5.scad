@@ -256,14 +256,13 @@ module yaw_mount(){
         }
         union(){
             //axis holes  - doing 1 long for rough placement
-            #translate([0,-yaw_mount_w/2-30-1,0])rotate([-90,0,0])cylinder(d=m3_hd, h= yaw_mount_w+60);
+            translate([0,-yaw_mount_w/2-30-1,0])rotate([-90,0,0])cylinder(d=m3_hd, h= yaw_mount_w+60);
             
             //dowel holes
-            translate([-servo_mount_thick/2-servo_tab_pos,servo_w/2,servo_mount_h/2+servo_w/2])rotate([0,-90,0])cylinder(d=dowel_d, h=20);
-            translate([-servo_mount_thick/2-servo_tab_pos,servo_w/2-4,servo_mount_h/2+servo_w/2])rotate([45,-90,0])cylinder(d=dowel_d, h=40);
-            translate([-servo_mount_thick/2-servo_tab_pos,servo_w/2+4,servo_mount_h/2+servo_w/2])rotate([-45,-90,0])cylinder(d=dowel_d, h=40);
-            translate([-servo_mount_thick/2-servo_tab_pos,servo_w/2-4,servo_mount_h/2+servo_w/2])rotate([90,-90,0])cylinder(d=dowel_d, h=40);
-            translate([-servo_mount_thick/2-servo_tab_pos,servo_w/2+4,servo_mount_h/2+servo_w/2])rotate([-90,-90,0])cylinder(d=dowel_d, h=40);
+            translate([0,-yaw_mount_w/2-yaw_block/2,yaw_mount_h/2+yaw_top/2])rotate([0,-90,0])cylinder(d=dowel_d, h=20);
+            translate([0,yaw_mount_w/2+yaw_block/2,yaw_mount_h/2+yaw_top/2])rotate([0,-90,0])cylinder(d=dowel_d, h=20);
+            translate([0,-yaw_mount_w/2-yaw_block/2,-yaw_mount_h/2+yaw_top/2])rotate([0,-90,0])cylinder(d=dowel_d, h=20);
+            translate([0,yaw_mount_w/2+yaw_block/2,-yaw_mount_h/2+yaw_top/2])rotate([0,-90,0])cylinder(d=dowel_d, h=20);
 
         }
     }
@@ -310,7 +309,7 @@ module assembly(){
 }
 
 //[[***** CONSTRUTION  ********]]//
-//layout();
+layout();
 //leg_assembly();
-full_leg_assembly();
+//full_leg_assembly();
 //assembly();
