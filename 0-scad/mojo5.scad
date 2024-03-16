@@ -1,5 +1,5 @@
 // MOJO 5bar
-//include <Getriebe.scad>;  //gear library
+include <Getriebe.scad>;  //gear library
 
 $fn=33;
 //m3 holes
@@ -78,6 +78,12 @@ module servo(){
         rotate([0,90,0]) cylinder(d=servo_nob_d/2, h=servo_nob_h);
         translate([-servo_tab_pos,-servo_w/2,-servo_w/2-servo_tab]) cube([2.7, servo_w, servo_l+(servo_tab*2)]);
     }
+}
+module mount_gear(){
+    stirnrad (modul=1.5, zahnzahl=13, breite=5, bohrung=m3_hd, eingriffswinkel=20, schraegungswinkel=0, optimiert=false);
+}
+module servo_gear(){
+    stirnrad (modul=1, zahnzahl=30, breite=5, bohrung=4, eingriffswinkel=20, schraegungswinkel=20, optimiert=true);
 }
 module servo_arm(){
 //part is upside down
@@ -192,7 +198,7 @@ module hip_cam(){
 
 
 module servo_mount(){
-    // V5 \\
+    // V6 \\
     tol = 0.7;
     screw_offset = 3.5;  //side screw offset from BOTH middle and end/tops
     // everything has been offset from the prime servo axis
@@ -221,7 +227,7 @@ module servo_mount(){
             translate([-servo_tab_pos-servo_mount_thick+screw_offset,servo_w*3/2-7,servo_w/2+servo_mount_h-screw_offset])rotate([-90,0,0])cylinder(d=post_hd,h=7+2);
             //Yaw Axis Holes for holding the axels (M3: 30mm shaft, 2mm head, 4mm head d)
             translate([-servo_mount_thick/2-servo_tab_pos,+servo_w/2,servo_w/2-1])rotate([0,0,0])cylinder(d=m3_hd, h=30+2+2);  //shaft
-            translate([-servo_mount_thick/2-servo_tab_pos,+servo_w/2,servo_w/2-1])rotate([0,0,0])cylinder(d=5+1, h=3+1);  //recess d5+1tol, depth 2=>3 
+            translate([-servo_mount_thick/2-servo_tab_pos,+servo_w/2,servo_w/2-1])rotate([0,0,0])cylinder(d=6+1, h=3+1);  //recess d5+1tol, depth 2=>3 
         }
 
     }
@@ -270,8 +276,11 @@ module yaw_mount(){
 
 module layout(){
     //servo();
+    mount_gear();
+    //servo_gear();
+    //mount_gear(); translate([0,0,0])servo_gear();
     //servo_mount();
-    yaw_mount();
+    //yaw_mount();
     //servo_arm();
     //cam_link();
     //upper_leg();
@@ -289,6 +298,8 @@ module leg_assembly(){
     //servo mount
     translate([0,0,0])rotate([0,0,0])servo_mount();
     translate([0,servo_w,-20.7])rotate([180,0,0])servo_mount();
+    //gear
+    translate([-17,servo_w/2,-servo_mount_w/2-5])rotate([0,0,0])mount_gear();
     //upper leg
     translate([15,0,0])rotate([0,-90,0])rotate([0,0,-120])color("Yellow", 0.9)upper_leg();
     //cam
@@ -309,7 +320,7 @@ module assembly(){
 }
 
 //[[***** CONSTRUTION  ********]]//
-layout();
+//layout();
 //leg_assembly();
-//full_leg_assembly();
+full_leg_assembly();
 //assembly();
