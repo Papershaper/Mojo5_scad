@@ -67,7 +67,7 @@ paw_stem = 25;
 paw_stem_d = 24;
 
 //hip cam
-hip_cam_r = 20;  //this one drives most of the connector lengths off of axis
+hip_cam_r = 25;  //this one drives most of the connector lengths off of axis  20->25
 
 
 module servo(){
@@ -91,45 +91,52 @@ module servo_gear(){
     stirnrad (modul=1.5, zahnzahl=14, breite=5, bohrung=servo_shaft, eingriffswinkel=20, schraegungswinkel=0, optimiert=false);
 }
 module servo_arm(){
+    //V2//
 //part is upside down
     difference(){
         union(){
             hull(){
                 translate([0,0,0]) cylinder(d=servo_hub, h=servo_arm_h);
-                translate([hip_cam_r,0,0]) cylinder(d=servo_pin_d*3, h=servo_arm_h/2);
+                translate([hip_cam_r,0,0]) cylinder(d=post_hd*3, h=servo_arm_h/2);
             }
         }
         union(){
             translate([0,0,1]) cylinder(d=servo_gear, h=servo_arm_h);  //gear part
             translate([0,0,-1]) cylinder(d=m3_hd, h=servo_arm_h);  //gear part
-            translate([hip_cam_r,0,-1]) cylinder(d=servo_pin_d, h=servo_arm_h+2);
+            translate([hip_cam_r,0,-1]) cylinder(d=post_hd, h=servo_arm_h+2);  //cam
         }
     }
 }
 module cam_link(){
+    // V3 //  M3-loose hole, v3 cam_length to 25
     difference(){
         union(){
             hull(){
-                translate([0,0,0]) cylinder(d=servo_pin_d*3, h=link_h);
-                translate([hip_cam_r,0,0]) cylinder(d=servo_pin_d*3, h=link_h);
+                translate([0,0,0]) cylinder(d=6, h=link_h);
+                translate([hip_cam_r,0,0]) cylinder(d=6, h=link_h);
             }
+            translate([0,0,0]) cylinder(d=m3_hd*3, h=link_h);
+            translate([hip_cam_r,0,0]) cylinder(d=m3_hd*3, h=link_h);
         }
         union(){
-            translate([0,0,-1]) cylinder(d=servo_pin_d, h=servo_arm_h+2); 
-            translate([hip_cam_r,0,-1]) cylinder(d=servo_pin_d, h=servo_arm_h+2);
+            translate([0,0,-1]) cylinder(d=m3_hd, h=servo_arm_h+2); 
+            translate([hip_cam_r,0,-1]) cylinder(d=m3_hd, h=servo_arm_h+2);
         }
     }
 }
 module upper_leg(){
+    // V2 // - add servo screw
     difference(){
         union(){
             hull(){
                 cylinder(d=up_leg_w,h=up_leg_h);
                 translate([70,0,0])cylinder(d=up_leg_w/2,h=up_leg_h);
             }
+            translate([70,0,0])cylinder(d=up_leg_w*3/4,h=up_leg_h);  //end reduces trans-lash
             cylinder(d=servo_hub,h=up_leg_h+servo_hub_h);
         }
         union(){
+            translate([0,0,-1])cylinder(d=m3_hd,h=up_leg_h+2);  //servo screw
             translate([0,0,up_leg_h])cylinder(d=servo_gear,h=servo_hub_h+1);
             translate([70,0,-1])cylinder(d=m3_hd,h=up_leg_h+2);
         }
@@ -142,6 +149,7 @@ module lower_leg_a(){
                 translate([-hip_cam_r,0,0])cylinder(d=low_leg_w,h=low_leg_h);
                 translate([low_leg_l,0,0])cylinder(d=low_leg_w,h=low_leg_h);
             }
+            translate([0,0,0])cylinder(d=low_leg_w*2,h=low_leg_h);  //reduce tran-for
             hull(){
                 translate([low_leg_l-low_leg_offset,0,low_leg_h])cylinder(d=low_leg_w,h=low_leg_h);
                 translate([low_leg_l,0,low_leg_h])cylinder(d=low_leg_w,h=low_leg_h);
@@ -165,12 +173,14 @@ module lower_leg_a(){
     }
 }
 module lower_leg_b(){
+    // V2 //
     difference(){
         union(){
             hull(){
                 translate([-hip_cam_r,0,0])cylinder(d=low_leg_w,h=low_leg_h);
                 translate([low_leg_l,0,0])cylinder(d=low_leg_w,h=low_leg_h);
             }
+            translate([0,0,0])cylinder(d=low_leg_w*2,h=low_leg_h);  //reduce tran-for
         }
         union(){
             translate([0,0,-1])cylinder(d=m3_hd,h=low_leg_h+2);
@@ -203,7 +213,7 @@ module hip_cam(){
 
 
 module servo_mount(){
-    // V6 \\
+    // V6_1 \\
     tol = 0.7;
     screw_offset = 3.5;  //side screw offset from BOTH middle and end/tops
     // everything has been offset from the prime servo axis
@@ -234,7 +244,7 @@ module servo_mount(){
             translate([-servo_mount_thick/2-servo_tab_pos,+servo_w/2,servo_w/2-1])rotate([0,0,0])cylinder(d=m3_hd, h=30+2+2);  //shaft
             translate([-servo_mount_thick/2-servo_tab_pos,+servo_w/2,servo_w/2-1])rotate([0,0,0])cylinder(d=6+1, h=3+1);  //recess d5.86+1tol, depth 2=>3 
             // gear post for locking gear
-            translate([-servo_mount_thick/2-servo_tab_pos,+servo_w/2-6,servo_w/2+2])rotate([0,0,0])cylinder(d=m3_hd, h=10);  //note -6 was the offset in the mount_gear module
+            translate([-servo_mount_thick/2-servo_tab_pos,+servo_w/2-6,servo_w/2+2])rotate([0,0,0])cylinder(d=post_hd, h=10);  //note -6 was the offset in the mount_gear module
         }
 
     }
@@ -244,8 +254,8 @@ module servo_mount(){
     //translate([0,servo_w,-servo_w])rotate([180,0,0])color("Tomato", 0.75)servo();
    
 }
-module yaw_mount(){
-    //*** V1 ***\\
+module yaw_mount_old(){
+    //*** V3 ***\\
     // This component holds the servo mount and provides the yaw to the leg
     // oriented around main axis and center for symetry
     //yaw_space_w = 20;
@@ -264,7 +274,7 @@ module yaw_mount(){
             difference(){
                 hull(){
                     translate([0,yaw_mount_w/2,0])rotate([-90,0,0])cylinder(d=yaw_mount_thick,h=yaw_block);
-                    translate([-yaw_mount_thick/2,yaw_mount_w/2,+yaw_mount_h/2])cube([yaw_mount_thick,yaw_block,yaw_top]);
+                    translate([-yaw_mount_thick/2,yaw_mount_w/2,+yaw_mount_h/2])cube([yaw_mount_thick/2,yaw_block,yaw_top]);
                 }
                 rotate([0,-45,0]) union(){
                     translate([0,yaw_mount_w/2,gear_sep])rotate([-90,0,0])cylinder(d=m3_hd, h=yaw_block);
@@ -275,9 +285,9 @@ module yaw_mount(){
             //sides other
             hull(){
                 translate([0,-yaw_mount_w/2-yaw_block,0])rotate([-90,0,0])cylinder(d=yaw_mount_thick,h=yaw_block);
-                translate([-yaw_mount_thick/2,-yaw_mount_w/2-yaw_block,+yaw_mount_h/2])cube([yaw_mount_thick,yaw_block,yaw_top]);
+                translate([-yaw_mount_thick/2,-yaw_mount_w/2-yaw_block,+yaw_mount_h/2])cube([yaw_mount_thick/2,yaw_block,yaw_top]);
             }
-            // experiment side:  6=diameter of output, 23 width of servo, 5tab with, 12 thick servo, 3 tab thick
+            // SERVO side:  6=diameter of output, 23 width of servo, 5tab with, 12 thick servo, 3 tab thick
             rotate([0,-45,0])
             difference(){
                 hull(){
@@ -296,8 +306,11 @@ module yaw_mount(){
             
             //bottom - thin - REMOVED
             //translate([-yaw_mount_thick/2,-yaw_mount_w/2,-yaw_mount_h/2-yaw_bottom])cube([yaw_mount_thick,yaw_mount_w,yaw_bottom]);
-            //top - thicker for structure
-            translate([-yaw_mount_thick/2,-yaw_mount_w/2-yaw_block,yaw_mount_h/2])cube([yaw_mount_thick,yaw_mount_w+yaw_block*2,yaw_top]);
+            //TOP - thicker for structure
+            
+            //translate([-yaw_mount_thick/2,-yaw_mount_w/2-yaw_block,yaw_mount_h/2])cube([yaw_mount_thick/2,yaw_mount_w+yaw_block*2,yaw_top]);
+            
+            translate([-yaw_mount_thick/4,-yaw_mount_w/2-yaw_block,yaw_mount_h/2+yaw_mount_thick/4])rotate([-90,0,0])cylinder(d=yaw_mount_thick*3/4,h=yaw_mount_w+yaw_block*2);
         }
         union(){
             //servo axis
@@ -309,22 +322,81 @@ module yaw_mount(){
     }
 }
 
+module yaw_mount(){
+    //*** V3 ***\\
+    // This component holds the servo mount and provides the yaw to the leg
+    // oriented around main axis and center for symetry
+    //yaw_space_w = 20;
+    //yaw_space_h = 20;
+    //yaw_mount_w = servo_l+servo_mount_h*2+yaw_space_w;  //servo mount width plus space around it
+    //yaw_mount_h = servo_2*2 + side_2*2 + yaw_space_h; //servo sizing
+    //yaw_mount_thick = servo_mount_thick; // depth x direction around 18
+    //yaw_block = 10; //thickness for the structure mount
+    //yaw_top = 8; //thickness at top for structure
+    //yaw_bottom = 3; //thickenss at bottomtructure
+    gear_sep = 21;
+
+    difference(){
+        union(){
+            hull(){
+                //basic side
+                translate([0,-yaw_mount_w/2-yaw_block,0])rotate([-90,0,0])cylinder(d=yaw_mount_thick,h=yaw_block);  //basis axis disc
+                translate([-yaw_mount_h/2-20,-yaw_mount_w/2-yaw_block,-yaw_mount_thick/2])cube([yaw_mount_thick+12,yaw_block,yaw_mount_thick]);
+                translate([-yaw_mount_h/2-12,-yaw_mount_w/2-yaw_block,yaw_mount_thick-yaw_mount_thick/2])cube([yaw_mount_thick/2,yaw_block,yaw_mount_thick]); //merge to top mount
+            }
+
+            hull(){
+                //basic side
+                translate([0,yaw_mount_w/2,0])rotate([-90,0,0])cylinder(d=yaw_mount_thick,h=yaw_block);  //basis axis disc
+                translate([-yaw_mount_h/2-20,yaw_mount_w/2,-yaw_mount_thick/2])cube([yaw_mount_thick+12,yaw_block,yaw_mount_thick]);
+                translate([-yaw_mount_h/2-12,yaw_mount_w/2,yaw_mount_thick-yaw_mount_thick/2])cube([yaw_mount_thick/2,yaw_block,yaw_mount_thick]); //merge to top mount
+            }
+
+            //END side connectors, dowel mounts
+            translate([-yaw_mount_h/2-12,-yaw_mount_w/2-yaw_block,yaw_mount_thick-yaw_mount_thick/2])cube([yaw_mount_thick/2,yaw_mount_w+yaw_block*2,yaw_mount_thick]);
+        }
+        
+        union(){
+            //servo
+            // SERVO side:  6=diameter of output, 23 width of servo, 5tab with, 12 thick servo, 3 tab thick
+            // -gearsep+6 positions the servo, add 5 more for the tab.  Then back off for the width of the servo (23) plus tabs (10)
+            #translate([-gear_sep,yaw_mount_w/2,0])rotate([-90,0,0])cylinder(d=m3_hd, h=yaw_block); //new
+            #translate([-gear_sep+6-23,yaw_mount_w/2-1,-6-4])rotate([0,0,0])cube([23,yaw_block+1,12+4]); //new
+            #translate([-gear_sep+6+5-23-10,yaw_mount_w/2+yaw_block-3,-6-4])rotate([0,0,0])cube([23+10,3.5,12+4]); //new 
+            // SERVO PINs
+            #translate([-gear_sep+6+2.5,yaw_mount_w/2+1,0])rotate([-90,0,0])cylinder(d=servo_hole_d,h=8);
+            #translate([-gear_sep+6-2.5-23,yaw_mount_w/2+1,0])rotate([-90,0,0])cylinder(d=servo_hole_d,h=8);
+            //Axel axis
+            #translate([0,-yaw_mount_w/2-30-1,0])rotate([-90,0,0])cylinder(d=m3_hd, h= yaw_mount_w+60);
+            //dowel holes, raised up to yaw_mount_thick
+            # translate([-yaw_mount_h/2,-yaw_mount_w/2-yaw_block/2,yaw_mount_thick])rotate([0,-90,0])cylinder(d=dowel_d, h=20);
+            # translate([-yaw_mount_h/2,yaw_mount_w/2+yaw_block/2,yaw_mount_thick])rotate([0,-90,0])cylinder(d=dowel_d, h=20);
+            # translate([-yaw_mount_h/2,0,yaw_mount_thick])rotate([0,-90,0])cylinder(d=dowel_d, h=20);
+            //down lengthwise
+            # translate([-yaw_mount_h/2,-yaw_mount_w/2-yaw_block-1,yaw_mount_thick])rotate([-90,0,0])cylinder(d=dowel_d, h=yaw_mount_w+60);
+
+
+        }
+    }
+}
+
+
 module layout(){
     //servo();
     //mount_gear();
     //servo_gear();
     //mount_gear(); translate([0,21,0])rotate([0,0,12])servo_gear();  //shafts seperated by 21mm
     //servo_mount();
-    yaw_mount();
+    //yaw_mount_old();
+    //yaw_mount();
     //servo_arm();
-    //cam_link();
+    cam_link();
     //upper_leg();
     //lower_leg_a();
     //lower_leg_b();
     //hip_cam();
 
 }
-
 module leg_assembly(){
 
     //servos
