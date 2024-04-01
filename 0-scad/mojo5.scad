@@ -67,7 +67,8 @@ paw_stem = 25;
 paw_stem_d = 24;
 
 //hip cam
-hip_cam_r = 25;  //this one drives most of the connector lengths off of axis  20->25
+hip_cam_r = 20;  //this one drives most of the connector lengths off of axis  20
+servo_cam_r = 29; // the parallelogram on the servo arm.  29 distance between servo Axis
 
 
 module servo(){
@@ -91,36 +92,36 @@ module servo_gear(){
     stirnrad (modul=1.5, zahnzahl=14, breite=5, bohrung=servo_shaft, eingriffswinkel=20, schraegungswinkel=0, optimiert=false);
 }
 module servo_arm(){
-    //V2//
+    //V3//
 //part is upside down
     difference(){
         union(){
             hull(){
                 translate([0,0,0]) cylinder(d=servo_hub, h=servo_arm_h);
-                translate([hip_cam_r,0,0]) cylinder(d=post_hd*3, h=servo_arm_h/2);
+                translate([servo_cam_r,0,0]) cylinder(d=post_hd*3, h=servo_arm_h/2);
             }
         }
         union(){
             translate([0,0,1]) cylinder(d=servo_gear, h=servo_arm_h);  //gear part
             translate([0,0,-1]) cylinder(d=m3_hd, h=servo_arm_h);  //gear part
-            translate([hip_cam_r,0,-1]) cylinder(d=post_hd, h=servo_arm_h+2);  //cam
+            translate([servo_cam_r,0,-1]) cylinder(d=post_hd, h=servo_arm_h+2);  //cam
         }
     }
 }
 module cam_link(){
-    // V3 //  M3-loose hole, v3 cam_length to 25
+    // V4 //  M3-loose hole, v3 cam_length to 29
     difference(){
         union(){
             hull(){
                 translate([0,0,0]) cylinder(d=6, h=link_h);
-                translate([hip_cam_r,0,0]) cylinder(d=6, h=link_h);
+                translate([servo_cam_r,0,0]) cylinder(d=6, h=link_h);
             }
             translate([0,0,0]) cylinder(d=m3_hd*3, h=link_h);
-            translate([hip_cam_r,0,0]) cylinder(d=m3_hd*3, h=link_h);
+            translate([servo_cam_r,0,0]) cylinder(d=m3_hd*3, h=link_h);
         }
         union(){
             translate([0,0,-1]) cylinder(d=m3_hd, h=servo_arm_h+2); 
-            translate([hip_cam_r,0,-1]) cylinder(d=m3_hd, h=servo_arm_h+2);
+            translate([servo_cam_r,0,-1]) cylinder(d=m3_hd, h=servo_arm_h+2);
         }
     }
 }
@@ -191,6 +192,7 @@ module lower_leg_b(){
     }
 }
 module hip_cam(){
+    // V3 //
     tol = 0.8;
 
     difference(){
@@ -198,14 +200,14 @@ module hip_cam(){
             hull(){
                 cylinder(d=servo_hub+6,h=servo_hub_h);
                 translate([hip_cam_r,0,0])cylinder(d=m3_hd+4,h=servo_hub_h);
-                translate([0,hip_cam_r,0])cylinder(d=m3_hd+4,h=servo_hub_h);
+                translate([0,servo_cam_r,0])cylinder(d=m3_hd+4,h=servo_hub_h);
             }
         }
         union(){
             translate([0,0,-1])cylinder(d=servo_hub+tol,h=servo_hub_h+2);
             //connector holes
             translate([hip_cam_r,0,-1])cylinder(d=m3_hd,h=servo_hub_h+2);
-            translate([0,hip_cam_r,-1])cylinder(d=m3_hd,h=servo_hub_h+2);
+            translate([0,servo_cam_r,-1])cylinder(d=m3_hd,h=servo_hub_h+2);
         }
     }
 
