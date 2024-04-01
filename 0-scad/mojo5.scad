@@ -131,15 +131,15 @@ module upper_leg(){
         union(){
             hull(){
                 cylinder(d=up_leg_w,h=up_leg_h);
-                translate([70,0,0])cylinder(d=up_leg_w/2,h=up_leg_h);
+                translate([up_leg_l,0,0])cylinder(d=up_leg_w/2,h=up_leg_h);
             }
-            translate([70,0,0])cylinder(d=up_leg_w*3/4,h=up_leg_h);  //end reduces trans-lash
+            translate([up_leg_l,0,0])cylinder(d=up_leg_w*3/4,h=up_leg_h);  //end reduces trans-lash
             cylinder(d=servo_hub,h=up_leg_h+servo_hub_h);
         }
         union(){
             translate([0,0,-1])cylinder(d=m3_hd,h=up_leg_h+2);  //servo screw
             translate([0,0,up_leg_h])cylinder(d=servo_gear,h=servo_hub_h+1);
-            translate([70,0,-1])cylinder(d=m3_hd,h=up_leg_h+2);
+            translate([up_leg_l,0,-1])cylinder(d=m3_hd,h=up_leg_h+2);
         }
     }
 }
@@ -193,7 +193,7 @@ module lower_leg_b(){
 }
 module hip_cam(){
     // V3 //
-    tol = 0.8;
+    tol = 0.7;
 
     difference(){
         union(){
@@ -213,6 +213,29 @@ module hip_cam(){
 
 }
 
+module tib_link(){
+    // V1 //  rebuild from days of yore
+    difference(){
+        union(){
+            hull(){
+                translate([0,0,0])cylinder(d=m3_hd+4,h=servo_hub_h);
+                translate([10,-10,+servo_hub_h/2])sphere(d=servo_hub_h);
+            }
+            hull(){
+                translate([10,-10,+servo_hub_h/2])sphere(d=servo_hub_h);
+                translate([60,-10,+servo_hub_h/2])sphere(d=servo_hub_h);
+            }
+            hull(){
+                translate([60,-10,+servo_hub_h/2])sphere(d=servo_hub_h);
+                translate([up_leg_l,0,0])cylinder(d=m3_hd+4,h=servo_hub_h);
+            }
+        }
+        union(){
+            translate([0,0,-1])cylinder(d=m3_hd,h=servo_hub_h+2);
+            translate([up_leg_l,0,-1])cylinder(d=m3_hd,h=servo_hub_h+2);
+        }
+    }
+}
 
 module servo_mount(){
     // V6_1 \\
@@ -255,73 +278,6 @@ module servo_mount(){
     //translate([0,0,0])rotate([0,0,0])color("Tomato", 0.75)servo();
     //translate([0,servo_w,-servo_w])rotate([180,0,0])color("Tomato", 0.75)servo();
    
-}
-module yaw_mount_old(){
-    //*** V3 ***\\
-    // This component holds the servo mount and provides the yaw to the leg
-    // oriented around main axis and center for symetry
-    //yaw_space_w = 20;
-    //yaw_space_h = 20;
-    //yaw_mount_w = servo_l+servo_mount_h*2+yaw_space_w;  //servo mount width plus space around it
-    //yaw_mount_h = servo_2*2 + side_2*2 + yaw_space_h; //servo sizing
-    //yaw_mount_thick = servo_mount_thick; // depth x direction around 18
-    //yaw_block = 10; //thickness for the structure mount
-    //yaw_top = 8; //thickness at top for structure
-    //yaw_bottom = 3; //thickenss at bottomtructure
-    gear_sep = 21;
-
-    difference(){
-        union(){
-            //side circle
-            difference(){
-                hull(){
-                    translate([0,yaw_mount_w/2,0])rotate([-90,0,0])cylinder(d=yaw_mount_thick,h=yaw_block);
-                    translate([-yaw_mount_thick/2,yaw_mount_w/2,+yaw_mount_h/2])cube([yaw_mount_thick/2,yaw_block,yaw_top]);
-                }
-                rotate([0,-45,0]) union(){
-                    translate([0,yaw_mount_w/2,gear_sep])rotate([-90,0,0])cylinder(d=m3_hd, h=yaw_block);
-                    translate([-6,yaw_mount_w/2-1,gear_sep-6])rotate([0,0,0])cube([12,yaw_block+1,23]);
-                    translate([-6,yaw_mount_w/2+yaw_block-3,gear_sep-6-5])rotate([0,0,0])cube([12,3.5,23+10]);
-                }
-            }
-            //sides other
-            hull(){
-                translate([0,-yaw_mount_w/2-yaw_block,0])rotate([-90,0,0])cylinder(d=yaw_mount_thick,h=yaw_block);
-                translate([-yaw_mount_thick/2,-yaw_mount_w/2-yaw_block,+yaw_mount_h/2])cube([yaw_mount_thick/2,yaw_block,yaw_top]);
-            }
-            // SERVO side:  6=diameter of output, 23 width of servo, 5tab with, 12 thick servo, 3 tab thick
-            rotate([0,-45,0])
-            difference(){
-                hull(){
-                    //experimemnt
-                    translate([0,yaw_mount_w/2,0])rotate([-90,0,0])cylinder(d=yaw_mount_thick,h=yaw_block);
-                    translate([-yaw_mount_thick/2,yaw_mount_w/2,+yaw_mount_h/2+10])cube([yaw_mount_thick+12,yaw_block,yaw_top]);
-                }
-                #union(){
-                    translate([0,yaw_mount_w/2,gear_sep])rotate([-90,0,0])cylinder(d=m3_hd, h=yaw_block);
-                    translate([-6-4,yaw_mount_w/2-1,gear_sep-6])rotate([0,0,0])cube([12+4,yaw_block+1,23]);
-                    translate([-6-4,yaw_mount_w/2+yaw_block-3,gear_sep-6-5])rotate([0,0,0])cube([12+4,3.5,23+10]);
-                    //dowel hole
-                    translate([yaw_block,yaw_mount_w/2+yaw_block/2,+yaw_mount_h/2])rotate([0,0,0])cylinder(d=dowel_d, h=20);
-                }
-            }
-            
-            //bottom - thin - REMOVED
-            //translate([-yaw_mount_thick/2,-yaw_mount_w/2,-yaw_mount_h/2-yaw_bottom])cube([yaw_mount_thick,yaw_mount_w,yaw_bottom]);
-            //TOP - thicker for structure
-            
-            //translate([-yaw_mount_thick/2,-yaw_mount_w/2-yaw_block,yaw_mount_h/2])cube([yaw_mount_thick/2,yaw_mount_w+yaw_block*2,yaw_top]);
-            
-            translate([-yaw_mount_thick/4,-yaw_mount_w/2-yaw_block,yaw_mount_h/2+yaw_mount_thick/4])rotate([-90,0,0])cylinder(d=yaw_mount_thick*3/4,h=yaw_mount_w+yaw_block*2);
-        }
-        union(){
-            //servo axis
-            #translate([0,-yaw_mount_w/2-30-1,0])rotate([-90,0,0])cylinder(d=m3_hd, h= yaw_mount_w+60);
-            //dowel holes
-            # translate([0,-yaw_mount_w/2-yaw_block/2,yaw_mount_h/2+yaw_top/2-1])rotate([0,45,0])rotate([0,-90,0])cylinder(d=dowel_d, h=20);
-
-        }
-    }
 }
 
 module yaw_mount(){
@@ -392,7 +348,8 @@ module layout(){
     //yaw_mount_old();
     //yaw_mount();
     //servo_arm();
-    cam_link();
+    //cam_link();
+    tib_link();
     //upper_leg();
     //lower_leg_a();
     //lower_leg_b();
