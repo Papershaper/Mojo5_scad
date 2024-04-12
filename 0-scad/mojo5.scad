@@ -89,7 +89,8 @@ module mount_gear(){
 }
 module servo_gear(){
     servo_shaft = 4.75;
-    stirnrad (modul=1.5, zahnzahl=14, breite=5, bohrung=servo_shaft, eingriffswinkel=20, schraegungswinkel=0, optimiert=false);
+    servo_gear_h = 6;
+    stirnrad (modul=1.5, zahnzahl=14, breite=servo_gear_h, bohrung=servo_shaft, eingriffswinkel=20, schraegungswinkel=0, optimiert=false);
 }
 module servo_arm(){
     //V3//
@@ -337,7 +338,20 @@ module yaw_mount(){
         }
     }
 }
-
+module chassis_connector(){
+    connector_d = 10;
+    connector_h = 15;
+    dowel_pos = dowel_d/2+1;
+    difference(){
+        union(){
+            cylinder(h=connector_h, d=connector_d);
+        } 
+        #union() {
+            translate([-connector_d/2-1,0,dowel_pos])rotate([0,90,0])cylinder(d=dowel_d, h=connector_d+2);
+        translate([0,-connector_d/2-1,dowel_pos*3])rotate([-90,0,0])cylinder(d=dowel_d, h=connector_d+2);
+        }
+    }
+}
 
 module layout(){
     //servo();
@@ -349,11 +363,12 @@ module layout(){
     //yaw_mount();
     //servo_arm();
     //cam_link();
-    tib_link();
+    //tib_link();
     //upper_leg();
     //lower_leg_a();
     //lower_leg_b();
     //hip_cam();
+    chassis_connector();
 
 }
 module leg_assembly(){
