@@ -48,7 +48,7 @@ yaw_top = 8; //thickness at top for structure
 yaw_bottom = 3; //thickenss at bottom
 
 //dowel
-dowel_d = 5.25;
+dowel_d = 4.25;  //now smaller
 
 //upper leg
 servo_hub = 12;
@@ -282,7 +282,7 @@ module servo_mount(){
 }
 
 module yaw_mount(){
-    //*** V3 ***\\
+    //*** V4 ***\\
     // This component holds the servo mount and provides the yaw to the leg
     // oriented around main axis and center for symetry
     //yaw_space_w = 20;
@@ -301,18 +301,18 @@ module yaw_mount(){
                 //basic side
                 translate([0,-yaw_mount_w/2-yaw_block,0])rotate([-90,0,0])cylinder(d=yaw_mount_thick,h=yaw_block);  //basis axis disc
                 translate([-yaw_mount_h/2-20,-yaw_mount_w/2-yaw_block,-yaw_mount_thick/2])cube([yaw_mount_thick+12,yaw_block,yaw_mount_thick]);
-                translate([-yaw_mount_h/2-12,-yaw_mount_w/2-yaw_block,yaw_mount_thick-yaw_mount_thick/2])cube([yaw_mount_thick/2,yaw_block,yaw_mount_thick]); //merge to top mount
+                translate([-yaw_mount_h/2-20,-yaw_mount_w/2-yaw_block,yaw_mount_thick-yaw_mount_thick/2])cube([yaw_mount_thick/2,yaw_block,yaw_mount_thick]); //merge to top mount
             }
 
             hull(){
                 //basic side
                 translate([0,yaw_mount_w/2,0])rotate([-90,0,0])cylinder(d=yaw_mount_thick,h=yaw_block);  //basis axis disc
                 translate([-yaw_mount_h/2-20,yaw_mount_w/2,-yaw_mount_thick/2])cube([yaw_mount_thick+12,yaw_block,yaw_mount_thick]);
-                translate([-yaw_mount_h/2-12,yaw_mount_w/2,yaw_mount_thick-yaw_mount_thick/2])cube([yaw_mount_thick/2,yaw_block,yaw_mount_thick]); //merge to top mount
+                translate([-yaw_mount_h/2-20,yaw_mount_w/2,yaw_mount_thick-yaw_mount_thick/2])cube([yaw_mount_thick/2,yaw_block,yaw_mount_thick]); //merge to top mount
             }
 
-            //END side connectors, dowel mounts
-            translate([-yaw_mount_h/2-12,-yaw_mount_w/2-yaw_block,yaw_mount_thick-yaw_mount_thick/2])cube([yaw_mount_thick/2,yaw_mount_w+yaw_block*2,yaw_mount_thick]);
+            //END - TOP BRIDGE - w/ 20mm offset from yaw_mount_h - side connectors, dowel mounts
+            translate([-yaw_mount_h/2-20,-yaw_mount_w/2-yaw_block,yaw_mount_thick-yaw_mount_thick/2])cube([yaw_mount_thick/2,yaw_mount_w+yaw_block*2,yaw_mount_thick]);
         }
         
         union(){
@@ -328,11 +328,14 @@ module yaw_mount(){
             //Axel axis
             #translate([0,-yaw_mount_w/2-30-1,0])rotate([-90,0,0])cylinder(d=m3_hd, h= yaw_mount_w+60);
             //dowel holes, raised up to yaw_mount_thick
-            # translate([-yaw_mount_h/2,-yaw_mount_w/2-yaw_block/2,yaw_mount_thick])rotate([0,-90,0])cylinder(d=dowel_d, h=20);
-            # translate([-yaw_mount_h/2,yaw_mount_w/2+yaw_block/2,yaw_mount_thick])rotate([0,-90,0])cylinder(d=dowel_d, h=20);
-            # translate([-yaw_mount_h/2,0,yaw_mount_thick])rotate([0,-90,0])cylinder(d=dowel_d, h=20);
+            # translate([-yaw_mount_h/2-5,-yaw_mount_w/2-yaw_block/2,yaw_mount_thick])rotate([0,-90,0])cylinder(d=dowel_d, h=20);
+            # translate([-yaw_mount_h/2-5,yaw_mount_w/2+yaw_block/2,yaw_mount_thick])rotate([0,-90,0])cylinder(d=dowel_d, h=20);
             //down lengthwise
-            # translate([-yaw_mount_h/2,-yaw_mount_w/2-yaw_block-1,yaw_mount_thick])rotate([-90,0,0])cylinder(d=dowel_d, h=yaw_mount_w+60);
+            # translate([-yaw_mount_h/2-5,-yaw_mount_w/2-yaw_block-1,yaw_mount_thick])rotate([-90,0,0])cylinder(d=dowel_d, h=yaw_mount_w+60);
+            //bolt holes  20mm sep
+            for (i = [-30:20:30]){
+                # translate([-yaw_mount_h/2-5,i,yaw_mount_thick])rotate([0,-90,0])cylinder(d=post_hd, h=20);
+            }
 
 
         }
@@ -360,7 +363,7 @@ module layout(){
     //mount_gear(); translate([0,21,0])rotate([0,0,12])servo_gear();  //shafts seperated by 21mm
     //servo_mount();
     //yaw_mount_old();
-    //yaw_mount();
+    yaw_mount();
     //servo_arm();
     //cam_link();
     //tib_link();
@@ -368,7 +371,7 @@ module layout(){
     //lower_leg_a();
     //lower_leg_b();
     //hip_cam();
-    chassis_connector();
+    //chassis_connector();
 
 }
 module leg_assembly(){
