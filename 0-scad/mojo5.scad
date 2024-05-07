@@ -22,7 +22,7 @@ servo_nob_h = 8;
 servo_tab = 7;
 servo_tab_pos = 8;    // servo_tab_pos (8) is the (x/depth) offset between the axis and where the tabs are.
 servo_gear = 6;
-servo_hole_d = 2.5;    //hole size for the servo mounting screws. 2 is too small.
+servo_hole_d = 2.2;    //hole size for the servo mounting screws. 2 is too small. 2.5 too large
 
 //servo arm
 servo_arm_h = 5;
@@ -282,7 +282,7 @@ module servo_mount(){
 }
 
 module yaw_mount(){
-    //*** V4 ***\\
+    //*** V5 ***\\
     // This component holds the servo mount and provides the yaw to the leg
     // oriented around main axis and center for symetry
     //yaw_space_w = 20;
@@ -330,6 +330,9 @@ module yaw_mount(){
             //dowel holes, raised up to yaw_mount_thick
             # translate([-yaw_mount_h/2-5,-yaw_mount_w/2-yaw_block/2,yaw_mount_thick])rotate([0,-90,0])cylinder(d=dowel_d, h=20);
             # translate([-yaw_mount_h/2-5,yaw_mount_w/2+yaw_block/2,yaw_mount_thick])rotate([0,-90,0])cylinder(d=dowel_d, h=20);
+            //dowel holes, raised up to yaw_mount_thick
+            # translate([-yaw_mount_h/2-5,-yaw_mount_w/2-yaw_block/2,0])rotate([0,-90,0])cylinder(d=dowel_d, h=20);
+            # translate([-yaw_mount_h/2-15,yaw_mount_w/2+yaw_block/2,0])rotate([0,-90,0])cylinder(d=dowel_d, h=10);
             //down lengthwise
             # translate([-yaw_mount_h/2-5,-yaw_mount_w/2-yaw_block-1,yaw_mount_thick])rotate([-90,0,0])cylinder(d=dowel_d, h=yaw_mount_w+60);
             //bolt holes  20mm sep
