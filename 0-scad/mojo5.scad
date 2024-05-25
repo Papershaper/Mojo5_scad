@@ -101,6 +101,7 @@ module servo_arm(){
                 translate([0,0,0]) cylinder(d=servo_hub, h=servo_arm_h);
                 translate([servo_cam_r,0,0]) cylinder(d=post_hd*3, h=servo_arm_h/2);
             }
+            translate([servo_cam_r,0,0]) cylinder(d=post_hd*3, h=servo_arm_h*3/4);
         }
         union(){
             translate([0,0,1]) cylinder(d=servo_gear, h=servo_arm_h);  //gear part
@@ -282,7 +283,7 @@ module servo_mount(){
 }
 
 module yaw_mount(){
-    //*** V5 ***\\
+    //*** V6 ***\\
     // This component holds the servo mount and provides the yaw to the leg
     // oriented around main axis and center for symetry
     //yaw_space_w = 20;
@@ -335,6 +336,8 @@ module yaw_mount(){
             # translate([-yaw_mount_h/2-15,yaw_mount_w/2+yaw_block/2,0])rotate([0,-90,0])cylinder(d=dowel_d, h=10);
             //down lengthwise
             # translate([-yaw_mount_h/2-5,-yaw_mount_w/2-yaw_block-1,yaw_mount_thick])rotate([-90,0,0])cylinder(d=dowel_d, h=yaw_mount_w+60);
+            //undermount dowl hole
+            # translate([-yaw_mount_h/2-5,-yaw_mount_w/2-yaw_block/2,0])rotate([-180,0,0])cylinder(d=dowel_d, h=yaw_mount_thick);
             //bolt holes  20mm sep
             for (i = [-30:20:30]){
                 # translate([-yaw_mount_h/2-5,i,yaw_mount_thick])rotate([0,-90,0])cylinder(d=post_hd, h=20);
@@ -365,7 +368,6 @@ module layout(){
     //servo_gear();
     //mount_gear(); translate([0,21,0])rotate([0,0,12])servo_gear();  //shafts seperated by 21mm
     //servo_mount();
-    //yaw_mount_old();
     yaw_mount();
     //servo_arm();
     //cam_link();
